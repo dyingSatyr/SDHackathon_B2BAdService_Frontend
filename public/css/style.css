@@ -2,3 +2,12 @@ html, body {
     margin:0;
     padding:0;
 }
+
+
+/* remove google print from bottom of the map */
+.gmnoprint a, .gmnoprint span {
+    display:none;
+}
+.gmnoprint div {
+    background:none !important;
+}
