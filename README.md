@@ -1,2 +1,4 @@
-# SDHackathon_B2BAdService_Frontend
-Skidata Hackathon 2019 - B2B Video ad to Car Park Application 
+# sdhack19-b2b.ad.fe
+
+## Project setup
+Skidata Hackathon 2019 - B2B Video Ad to Car Park App Frontend with Vue
