@@ -1,21 +1,35 @@
 <template>
   <div>
-      <div id="map"></div>
+    <div id="map"></div>
+    <div id="carpark" v-if="!selectedCarPark">
+        <h1>Please Select A Car Park Where You Would Like To Advertise</h1>
+    </div>
+    <div v-else>
+        <h1>{{ selectedCarPark.name }}</h1>
+        <ul v-for="device in selectedCarPark.devices" :key="device.deviceNo">
+            <li>{{ device.deviceName }}</li>
+        </ul>
+    </div>
   </div>
 </template>
 
 <script>
 import gmapsInit from '../utils/gmaps';
+import axios from 'axios'
+
 
 export default {
     name: 'Map',
     data: function () {
         return {
-            prevInfoWindow: null
+            prevInfoWindow: null,
+            selectedCarPark: null,
+            carparks: null
         }
     },
     methods: {
         addMarkers: function (markers, google, map, infoWindow) {
+            const that = this;
             markers.forEach(marker => {
                 let newMarker = new google.maps.Marker({
                     position: marker.position,
@@ -27,6 +41,7 @@ export default {
                 //Handle marker infoboxes
                 google.maps.event.addListener(newMarker, 'click', function(){
                     infoWindow.close();
+                    that.selectedCarPark = marker
                     infoWindow.setContent(marker.content);
                     infoWindow.open(map, newMarker)
                 })     
@@ -45,20 +60,13 @@ export default {
             scrollwheel: false
         })
         
-        let markers = [{
-            position: {lat: 47.8195, lng: 13.0660},
-            content: '<h3>Coca Cola Parkaus 11</h3><p>Lorem ipsum dolor sit amet</p><a href="#" class="btn">Advertise Here</a>'
-        },
-        {
-            position: {lat: 47.7995, lng: 13.0460},
-            content: '<h3>Coca Cola Parkaus 12</h3><p>Lorem ipsum dolor sit amet</p><a href="#" class="btn">Advertise Here</a>'
-        },
-        {
-            position: {lat: 47.8095, lng: 13.0260},
-            content: '<h3>Coca Cola Parkaus 13</h3><p>Lorem ipsum dolor sit amet</p><a href="#" class="btn">Advertise Here</a>'
-        }]
 
-        this.addMarkers(markers, google, map, infoWindow);
+        await axios.get('http://localhost:5000/carparks')
+        .then( response => {
+            this.carparks = response.data
+        })
+
+        this.addMarkers(this.carparks, google, map, infoWindow);
         
     }
 };
@@ -68,7 +76,7 @@ export default {
 <style scoped>
 #map {
   width: 100%;
-  height: 600px;
+  height: 400px;
   margin: 0 auto;
   background: gray;
 }
